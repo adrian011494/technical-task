@@ -12,6 +12,7 @@ const getUserInformation = async (req, res) => {
     // Construct the response object
     const response = {
       name: user.name,
+      username: user.login,
       followers: user.followers,
       following: user.following,
     };
@@ -19,7 +20,11 @@ const getUserInformation = async (req, res) => {
     res.json(response);
   } catch (error) {
     console.error('Error:', error.message);
-    res.status(500).json({ error: 'An error occurred' });
+    if(error.response.status == 404){
+      res.status(404).json({ message: 'Not Found' });
+    } else{
+      res.status(500).json({ error: 'An error occurred' });
+    }
   }
 };
 
@@ -35,14 +40,18 @@ const getUserRepo = async (req, res) => {
 
     // Construct the response object
     const response = {
+        username: repository.owner.login,
         full_name: repository.full_name,
         private: repository.private,
     };
 
     res.json(response);
   } catch (error) {
-    console.error('Error:', error.message);
-    res.status(500).json({ error: 'An error occurred' });
+    if(error.response.status == 404){
+      res.status(404).json({ message: 'Not Found' });
+    } else{
+      res.status(500).json({ error: 'An error occurred' });
+    }
   }
 };
 
