@@ -4,13 +4,13 @@
       <p>User: {{ user.name }}</p>
       <p>Followers: {{ user.followers }}</p>
 
-      <p>Following: {{ followingCount }}</p>
+      <p>Following: {{ user.following }}</p>
       <button @click="incrementFollowingCount">Increment</button>
 
     </div>
     <div>
       <h2>Repos</h2>
-      <p v-if="user.repository">{{ message }}</p>
+      <p v-if="repository">{{ message }}</p>
       <p v-else>No repository available.</p>
     </div>
   </template>
@@ -23,18 +23,19 @@
     data() {
       return {
         user: {},
-        followingCount: 0,
+        repository: {}
       };
     },
     mounted() {
-      this.fetchUserInformation();
+      this.fetchUserInformation()
+      this.fetchUserRepo()
     },
     computed: {
       message() {
-        if (this.user.repository.private) {
-          return `User ${this.user.name} with ${this.user.followers} followers is following ${this.followingCount}. One repo for this user is ${this.user.repository.full_name} and it is private.`;
+        if (this.repository.private) {
+          return `User ${this.user.name} with ${this.user.followers} followers is following ${this.user.following}. One repo for this user is ${this.repository.full_name} and it is private.`;
         } else {
-          return `User ${this.user.name} with ${this.user.followers} followers is following ${this.followingCount}. One repo for this user is ${this.user.repository.full_name} and it is not private.`;
+          return `User ${this.user.name} with ${this.user.followers} followers is following ${this.user.following}. One repo for this user is ${this.repository.full_name} and it is not private.`;
         }
       },
     },
@@ -49,8 +50,20 @@
           console.error('Error:', error.message);
         }
       },
+
+      async fetchUserRepo() {
+        try {
+          const username = this.$route.params.user;
+          const response = await axios.get(`http://localhost:8080/users/${username}/repo`);
+
+          this.repository = response.data;
+        } catch (error) {
+          console.error('Error:', error.message);
+        }
+      },
+
       incrementFollowingCount() {
-        this.followingCount += 10;
+        this.user.following += 10;
       },
     },
   };

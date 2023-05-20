@@ -9,18 +9,34 @@ const getUserInformation = async (req, res) => {
     const userResponse = await axios.get(`https://api.github.com/users/${username}`);
     const user = userResponse.data;
 
+    // Construct the response object
+    const response = {
+      name: user.name,
+      followers: user.followers,
+      following: user.following,
+    };
+
+    res.json(response);
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+};
+
+
+// Controller function to fetch user repo from GitHub
+const getUserRepo = async (req, res) => {
+  try {
+    const { username } = req.params;
+
     // Fetch one repository for the user
     const reposResponse = await axios.get(`https://api.github.com/users/${username}/repos?per_page=1`);
     const repository = reposResponse.data[0];
 
     // Construct the response object
     const response = {
-      name: user.name,
-      followers: user.followers,
-      repository: {
         full_name: repository.full_name,
         private: repository.private,
-      },
     };
 
     res.json(response);
@@ -32,4 +48,5 @@ const getUserInformation = async (req, res) => {
 
 module.exports = {
   getUserInformation,
+  getUserRepo
 };
