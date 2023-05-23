@@ -1,11 +1,16 @@
-import './assets/main.css'
+// Import the main CSS file
+import './assets/main.css';
 
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
+// Import the necessary functions and components from Vue
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
 
-const app = createApp(App)
+// Create a new Vue application instance
+const app = createApp(App);
 
-app.use(router)
+// Use the router configuration for the application
+app.use(router);
 
-app.mount('#app')
+// Mount the Vue application to the HTML element with the ID 'app'
+app.mount('#app');

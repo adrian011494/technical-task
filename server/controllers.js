@@ -1,6 +1,13 @@
 const axios = require('axios');
 
-// Controller function to fetch user information from GitHub
+/**
+ * Fetches user information from GitHub.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} The user information.
+ * @throws {Error} If an error occurs during the API request.
+ */
 const getUserInformation = async (req, res) => {
   try {
     const { username } = req.params;
@@ -20,16 +27,26 @@ const getUserInformation = async (req, res) => {
     res.json(response);
   } catch (error) {
     console.error('Error:', error.message);
-    if(error.response.status == 404){
+    if (error.response && error.response.status === 404) {
       res.status(404).json({ message: 'Not Found' });
-    } else{
+    } else if (error.response && error.response.status === 403) {
+      const resetTime = new Date(parseInt(error.response.headers['x-ratelimit-reset']) * 1000);
+      res.status(429).json({ error: 'Rate limit exceeded', resetTime });
+    } else {
       res.status(500).json({ error: 'An error occurred' });
     }
   }
 };
 
 
-// Controller function to fetch user repo from GitHub
+/**
+ * Fetches a user's repository from GitHub.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} The repository information.
+ * @throws {Error} If an error occurs during the API request.
+ */
 const getUserRepo = async (req, res) => {
   try {
     const { username } = req.params;
@@ -41,15 +58,18 @@ const getUserRepo = async (req, res) => {
     // Construct the response object
     const response = {
         username: repository.owner.login,
-        full_name: repository.full_name,
+        repository_name: repository.full_name,
         private: repository.private,
     };
 
     res.json(response);
   } catch (error) {
-    if(error.response.status == 404){
+    if (error.response && error.response.status === 404) {
       res.status(404).json({ message: 'Not Found' });
-    } else{
+    } else if (error.response && error.response.status === 403) {
+      const resetTime = new Date(parseInt(error.response.headers['x-ratelimit-reset']) * 1000);
+      res.status(429).json({ error: 'Rate limit exceeded', resetTime });
+    } else {
       res.status(500).json({ error: 'An error occurred' });
     }
   }
