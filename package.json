@@ -7,7 +7,9 @@
     "test": "mocha server/test/server.test.js",
     "start:server": "node server/server.js",
     "start:client": "cd client && npm run dev",
-    "start": "run-p start:server start:client"
+    "start": "run-p start:server start:client",
+    "postinstall": "cd client && npm install"
+
   },
   "author": "adrian arencibia herrera",
   "license": "ISC",
